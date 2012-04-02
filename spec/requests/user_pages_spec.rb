@@ -30,6 +30,17 @@ describe "UserPages" do
       it "should not create a user" do
         expect { click_button "Create my account" }.not_to change(User, :count)
       end
+
+
+      describe "error messages" do
+        before { click_button "Create my account" }
+
+        it { should have_selector('title', text: 'Sign up') }
+        it { should have_content('Password is too short') }
+        it { should have_content('Password can\'t be blank') }
+        it { should have_content('Name can\'t be blank') }
+      end
+
     end
 
     describe "with valid information" do
@@ -40,6 +51,14 @@ describe "UserPages" do
         fill_in "Confirmation", with: "foobar"
       end
 
+      describe "after saving the user" do
+        before { click_button "Create my account" }
+        let (:user) { User.find_by_email('user@example.com') }
+
+        it { should have_selector('title', text: user.name) }
+        it { should have_selector('div.alert.alert-success', text: 'Welcome') }
+      end
+
       it "should create a user" do
         expect do
           click_button "Create my account"
@@ -47,6 +66,11 @@ describe "UserPages" do
       end
     end
 
+    
+
   end
+
+
+
   
 end
